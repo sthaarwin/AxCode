@@ -17,6 +17,7 @@
 #define CTRL_KEY(k) ((k) & 0x1f)
 #define HL_HIGHLIGHT_NUMBERS (1<<0)
 #define HL_HIGHLIGHT_STRINGS (1<<1)
+#define HL_HIGHLIGHT_MULTILINE_COMMENT (1<<2)
 #define VERSION "0.1"
 
 // Define color pairs
@@ -24,9 +25,13 @@ enum editorColors {
     COLOR_DEFAULT = 1,
     COLOR_COMMENT,
     COLOR_KEYWORD,
+    COLOR_TYPE,      // For type keywords like "var", "fun", etc.
+    COLOR_CONTROL,   // For control flow keywords
     COLOR_NUMBER,
     COLOR_STRING,
     COLOR_MATCH,
+    COLOR_BOOLEAN,   // For boolean values (true/false)
+    COLOR_OPERATOR,  // For operators
     COLOR_STATUS,
     COLOR_STATUS_MSG,
     COLOR_LINE_NUMBER
@@ -44,7 +49,12 @@ struct editorSyntax {
     char *filetype;
     char **filematch;
     char **keywords;
+    char **type_keywords;     // For highlighting type-related keywords 
+    char **control_keywords;  // For highlighting control flow keywords
+    char **operator_patterns; // For highlighting operators
     char *singleline_comment_start;
+    char *multiline_comment_start;
+    char *multiline_comment_end;
     int flags;
 };
 
@@ -54,6 +64,7 @@ typedef struct erow {
     int rsize;
     char *render;
     unsigned char *hl;  // Highlight array
+    int hl_open_comment; // Flag for open multiline comments
 } erow;
 
 struct editorConfig {
